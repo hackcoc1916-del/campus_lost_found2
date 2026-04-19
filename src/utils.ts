@@ -5,6 +5,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+export const getApiUrl = (path: string) => {
+  if (path.startsWith('http')) return path;
+  return `${API_BASE_URL}${path}`;
+};
+
+export const getImageUrl = (url: string | undefined | null) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${API_BASE_URL}${url}`;
+};
+
 export const CATEGORIES = [
   'Electronics',
   'Pets',

@@ -1,3 +1,5 @@
+import { getApiUrl } from '../utils';
+
 const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('token');
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -14,12 +16,14 @@ const getAuthHeadersOnly = (): Record<string, string> => {
 
 export const api = {
   get: async (url: string) => {
-    const res = await fetch(url, { headers: getAuthHeaders() });
+    const fullUrl = getApiUrl(url);
+    const res = await fetch(fullUrl, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error(`GET ${url} failed: ${res.status}`);
     return res.json();
   },
   post: async (url: string, body?: any) => {
-    const res = await fetch(url, {
+    const fullUrl = getApiUrl(url);
+    const res = await fetch(fullUrl, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: body ? JSON.stringify(body) : undefined,
@@ -28,7 +32,8 @@ export const api = {
     return res.json();
   },
   put: async (url: string, body?: any) => {
-    const res = await fetch(url, {
+    const fullUrl = getApiUrl(url);
+    const res = await fetch(fullUrl, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: body ? JSON.stringify(body) : undefined,
@@ -37,14 +42,15 @@ export const api = {
     return res.json();
   },
   delete: async (url: string) => {
-    const res = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
+    const fullUrl = getApiUrl(url);
+    const res = await fetch(fullUrl, { method: 'DELETE', headers: getAuthHeaders() });
     if (!res.ok) throw new Error(`DELETE ${url} failed: ${res.status}`);
     return res.json();
   },
   uploadFile: async (url: string, file: File, onProgress?: (p: number) => void) => {
     return new Promise<any>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', url);
+      xhr.open('POST', getApiUrl(url));
       const token = localStorage.getItem('token');
       if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
 

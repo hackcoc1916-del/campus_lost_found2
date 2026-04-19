@@ -4,7 +4,7 @@ import { MapPin, Calendar, Tag, MessageSquare, CheckCircle, Trash2 } from 'lucid
 import { Badge } from '../ui/Badge';
 import { useAuth } from '../../AuthContext';
 import { useLanguage } from '../../LanguageContext';
-import { cn, formatDisplayDate, CATEGORY_ICONS, timeAgo } from '../../utils';
+import { cn, formatDisplayDate, CATEGORY_ICONS, timeAgo, getImageUrl } from '../../utils';
 import { updateItemStatus, deleteItem, type Item } from '../../services/items';
 import toast from 'react-hot-toast';
 
@@ -60,7 +60,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({ item, onStartChat, onViewDet
       {item.imageUrl ? (
         <div className="h-48 w-full overflow-hidden bg-[var(--bg-input)] relative">
           <img
-            src={item.imageUrl}
+            src={getImageUrl(item.imageUrl)}
             alt={item.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             onError={(e) => (e.currentTarget.style.display = 'none')}

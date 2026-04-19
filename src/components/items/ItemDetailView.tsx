@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { SmartMatchPanel } from './SmartMatchPanel';
 import { useAuth } from '../../AuthContext';
 import { useLanguage } from '../../LanguageContext';
-import { cn, formatDisplayDate, CATEGORY_ICONS, timeAgo } from '../../utils';
+import { cn, formatDisplayDate, CATEGORY_ICONS, timeAgo, getImageUrl } from '../../utils';
 import { updateItemStatus, deleteItem, type Item } from '../../services/items';
 import toast from 'react-hot-toast';
 
@@ -92,7 +92,7 @@ export const ItemDetailView: React.FC<ItemDetailViewProps> = ({ item, onBack, on
             {item.imageUrl && (
               <div className="rounded-2xl overflow-hidden bg-[var(--bg-input)] shadow-md">
                 <img
-                  src={item.imageUrl}
+                  src={getImageUrl(item.imageUrl)}
                   alt={item.title}
                   className="w-full max-h-[400px] object-cover"
                 />

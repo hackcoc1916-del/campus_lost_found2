@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { getApiUrl } from './utils';
 
 export interface UserProfile {
   _id: string;
@@ -25,7 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('https://campus-backend-xgvt.onrender.com/api/auth/me', {
+      fetch(getApiUrl('/api/auth/me'), {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => {
@@ -45,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = async (accessToken: string) => {
     try {
-      const res = await fetch('https://campus-backend-xgvt.onrender.com/api/auth/google', {
+      const res = await fetch(getApiUrl('/api/auth/google'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ access_token: accessToken }),
