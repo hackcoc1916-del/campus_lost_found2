@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Indigo/Teal — Light Mode */
+    --bg-primary: #F8F9FC;
+    --bg-surface: #FFFFFF;
+    --bg-surface-hover: #F1F3F9;
+    --bg-elevated: #FFFFFF;
+    --bg-input: #F1F3F9;
+
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --text-inverse: #FFFFFF;
+
+    --border-default: #E2E8F0;
+    --border-subtle: #F1F5F9;
+
+    --accent-primary: #4F46E5;       /* Indigo 600 */
+    --accent-primary-hover: #4338CA; /* Indigo 700 */
+    --accent-primary-soft: #EEF2FF; /* Indigo 50 */
+    --accent-primary-muted: #A5B4FC; /* Indigo 300 */
+
+    --accent-teal: #0D9488;         /* Teal 600 */
+    --accent-teal-soft: #F0FDFA;    /* Teal 50 */
+
+    --status-lost: #EF4444;         /* Red 500 */
+    --status-lost-soft: #FEF2F2;    /* Red 50 */
+    --status-found: #10B981;        /* Emerald 500 */
+    --status-found-soft: #ECFDF5;   /* Emerald 50 */
+    --status-resolved: #8B5CF6;     /* Violet 500 */
+    --status-resolved-soft: #F5F3FF; /* Violet 50 */
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-full: 9999px;
+  }
+
+  .dark {
+    --bg-primary: #0B0F1A;
+    --bg-surface: #131828;
+    --bg-surface-hover: #1C2237;
+    --bg-elevated: #1C2237;
+    --bg-input: #1C2237;
+
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --text-inverse: #0F172A;
+
+    --border-default: #1E293B;
+    --border-subtle: #1E293B;
+
+    --accent-primary: #818CF8;       /* Indigo 400 */
+    --accent-primary-hover: #A5B4FC; /* Indigo 300 */
+    --accent-primary-soft: rgba(99, 102, 241, 0.12);
+    --accent-primary-muted: #6366F1;
+
+    --accent-teal: #2DD4BF;
+    --accent-teal-soft: rgba(13, 148, 136, 0.12);
+
+    --status-lost: #F87171;
+    --status-lost-soft: rgba(239, 68, 68, 0.12);
+    --status-found: #34D399;
+    --status-found-soft: rgba(16, 185, 129, 0.12);
+    --status-resolved: #A78BFA;
+    --status-resolved-soft: rgba(139, 92, 246, 0.12);
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    line-height: 1.6;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+  /* Custom animations */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-surface-hover) 50%, var(--bg-input) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+}
