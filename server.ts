@@ -3,12 +3,18 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
+
+// ─── Cloudinary Config ──────────────────────────────────────────
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 const PORT = 3001;
@@ -19,13 +25,6 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 // ─── Middleware ──────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-
-// Ensure uploads directory exists
-const uploadsDir = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-app.use('/uploads', express.static(uploadsDir));
 
 // ─── Mongoose Models ────────────────────────────────────────────
 const userSchema = new mongoose.Schema({
@@ -94,16 +93,9 @@ const authMiddleware = (req: AuthRequest, res: express.Response, next: express.N
   }
 };
 
-// ─── Multer Config ──────────────────────────────────────────────
-const storage = multer.diskStorage({
-  destination: uploadsDir,
-  filename: (_req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
+// ─── Multer Config (memory storage for Cloudinary) ─────────────
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
@@ -242,11 +234,6 @@ app.delete('/api/items/:id', authMiddleware, async (req: AuthRequest, res) => {
       res.status(404).json({ error: 'Item not found' });
       return;
     }
-    // Delete associated image file
-    if (item.imageUrl && item.imageUrl.startsWith('/uploads/')) {
-      const filePath = path.join(process.cwd(), item.imageUrl);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    }
     await Item.findByIdAndDelete(req.params.id);
     res.json({ success: true });
   } catch {
@@ -254,14 +241,26 @@ app.delete('/api/items/:id', authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
-// ─── UPLOAD ROUTE ───────────────────────────────────────────────
+// ─── UPLOAD ROUTE (Cloudinary) ──────────────────────────────────
 app.post('/api/upload', authMiddleware, upload.single('image'), (req: AuthRequest, res) => {
   if (!req.file) {
     res.status(400).json({ error: 'No file uploaded' });
     return;
   }
-  const imageUrl = `/uploads/${req.file.filename}`;
-  res.json({ imageUrl });
+
+  const uploadStream = cloudinary.uploader.upload_stream(
+    { folder: 'campus-lost-found', resource_type: 'image' },
+    (error, result) => {
+      if (error || !result) {
+        console.error('Cloudinary upload error:', error);
+        res.status(500).json({ error: 'Image upload failed' });
+        return;
+      }
+      res.json({ imageUrl: result.secure_url });
+    }
+  );
+
+  uploadStream.end(req.file.buffer);
 });
 
 // ─── CHAT ROUTES ────────────────────────────────────────────────
