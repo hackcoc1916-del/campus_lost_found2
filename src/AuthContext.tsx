@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('/api/auth/me', {
+      fetch('https://campus-backend-xgvt.onrender.com/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => {
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = async (accessToken: string) => {
     try {
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('https://campus-backend-xgvt.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ access_token: accessToken }),
